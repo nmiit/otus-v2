@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "testkuber"
+      "url": "arch.homework"
     }
   ],
   "paths": {
@@ -23,7 +23,7 @@
             "name": "host",
             "in": "header",
             "required": false,
-            "example": "testkuber",
+            "example": "arch.homework",
             "schema": {
               "deprecated": false
             }

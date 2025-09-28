@@ -43,7 +43,7 @@ service:
 # Ingress для приложения
 ingress:
   enabled: true
-  host: testkuber
+  host: arch.homework
   pathType: ImplementationSpecific
 
 # PostgreSQL
@@ -102,6 +102,6 @@ kubePrometheusStack:
 grafana:
   ingress:
     enabled: true
-    host: testkuber.grafana
+    host: arch.homework.grafana
     annotations:
       nginx.ingress.kubernetes.io/ssl-redirect: "false"
