@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "spring-app.fullname" . }}-jwt-secret
+  labels:
+    konghq.com/credential: "jwt"
+type: Opaque
+stringData:
+  key: {{ .Values.kong.jwtKey | quote }}
+  algorithm: {{ .Values.kong.jwtAlgorithm | quote }}
+  rsa_public_key: |
+    {{- .Values.kong.jwtPublicKey | nindent 4 }}
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongConsumer
+metadata:
+  name: {{ include "spring-app.fullname" . }}-consumer
+  annotations:
+    kubernetes.io/ingress.class: kong
+username: {{ .Values.kong.jwtConsumer | quote }}
+credentials:
+  - {{ include "spring-app.fullname" . }}-jwt-secret
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: {{ include "spring-app.fullname" . }}-jwt-auth
+plugin: jwt
+config:
+  key_claim_name: iss
+  claims_to_verify:
+    - exp
+  cookie_names: [ ]
+  uri_param_names: [ ]
+  header_names:
+    - X-AUTH-TOKEN

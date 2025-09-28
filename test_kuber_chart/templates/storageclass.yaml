@@ -1,0 +1,16 @@
+{{- if and .Values.postgres.enabled .Values.postgres.persistence.enabled .Values.postgres.storageClassCreate }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.postgres.storageClassName }}
+  labels:
+    app: {{ include "postgres.fullname" . }}
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "{{ .Values.postgres.storageClassDefault | default false }}"
+provisioner: {{ .Values.postgres.provisioner | default "kubernetes.io/aws-ebs" }}
+reclaimPolicy: Retain
+volumeBindingMode: {{ .Values.postgres.volumeBindingMode | default "WaitForFirstConsumer" }}
+{{- if .Values.postgres.allowVolumeExpansion }}
+allowVolumeExpansion: true
+{{- end }}
+{{- end }}

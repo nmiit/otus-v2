@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/migrations/create-tables.sql
+  - include:
+      file: db/changelog/migrations/add-fields-to-tables.sql

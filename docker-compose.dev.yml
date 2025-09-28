@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  db-dev:
+    image: postgres:14
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_DB: test_kuber_local
+      POSTGRES_USER: test_kuber_local
+      POSTGRES_PASSWORD: 'password'
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - db-dev-data:/var/lib/postgresql/dev/data
+
+volumes:
+  db-dev-data:

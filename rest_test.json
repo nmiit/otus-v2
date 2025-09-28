@@ -1,0 +1,162 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "у-кубер",
+    "version": "1.0.0",
+    "description": ""
+  },
+  "servers": [
+    {
+      "url": "testkuber"
+    }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "parameters": [],
+      "post": {
+        "summary": "register user",
+        "tags": [
+          "auth"
+        ],
+        "parameters": [
+          {
+            "name": "host",
+            "in": "header",
+            "required": false,
+            "example": "testkuber",
+            "schema": {
+              "deprecated": false
+            }
+          }
+        ],
+        "responses": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "username": "test_user",
+                "email": "test_user@mail.com4",
+                "password": "very_dificult_password"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "parameters": [],
+      "post": {
+        "summary": "login user",
+        "tags": [
+          "auth"
+        ],
+        "parameters": [],
+        "responses": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "username": "test_user",
+                "password": "very_dificult_password"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/profile": {
+      "parameters": [],
+      "get": {
+        "summary": "user profile",
+        "tags": [
+          "profile"
+        ],
+        "parameters": [
+          {
+            "name": "X-AUTH-TOKEN",
+            "in": "header",
+            "required": false,
+            "example": "Bearer <your_token>",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {}
+      },
+      "put": {
+        "summary": "user profile",
+        "tags": [
+          "profile"
+        ],
+        "parameters": [
+          {
+            "name": "X-AUTH-TOKEN",
+            "in": "header",
+            "required": false,
+            "example": "Bearer <your_token>",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "fullName": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "nullable": true
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "street": {
+                    "type": "string"
+                  },
+                  "houseNumber": {
+                    "type": "string",
+                    "format": "utc-millisec"
+                  }
+                }
+              },
+              "example": {
+                "name": "NewName",
+                "email": "new_email@mail.com",
+                "fullName": "FullNewName",
+                "phone": null,
+                "city": "BigCity",
+                "street": "Lenina st.",
+                "houseNumber": "12"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

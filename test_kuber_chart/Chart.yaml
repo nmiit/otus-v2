@@ -1,0 +1,15 @@
+apiVersion: v2
+name: test-kuber-chart
+version: 1.2.0
+appVersion: "1.3.4"
+description: Helm chart for Spring Boot app with PostgreSQL and Kong
+dependencies:
+  - name: kong
+    version: 2.33.0
+    repository: https://charts.konghq.com
+    condition: kong.enabled
+
+  - name: kube-prometheus-stack
+    version: 77.1.1
+    repository: https://prometheus-community.github.io/helm-charts
+    condition: monitoring.enabled

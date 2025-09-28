@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: test_kuber
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+server:
+  port: ${SERVER_PORT}
+
+jwt:
+  rsa-public-key: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
+
+# Настройки Spring Boot Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus  # Включаем нужные эндпоинты
+      base-path: /actuator
+      path-mapping:
+        prometheus: /prometheus  # Опционально: изменить путь к prometheus
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      access: unrestricted
+    metrics:
+      access: unrestricted
+  metrics:
+    tags:
+      application: ${spring.application.name:my-app}  # Добавляем теги к метрикам
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+        step: 60s

@@ -1,0 +1,107 @@
+# Включение Kong Ingress Controller вместо NGINX
+kong:
+  enabled: true
+  authCookieName: "auth_token"
+  jwtConsumer: "myapp-user"
+  jwtKey: "myapp-issuer"        # Должен совпадать с iss в JWT
+  jwtAlgorithm: "RS256"         # Алгоритм подписи
+
+  # Настройки прокси
+  proxy:
+    type: LoadBalancer
+    http:
+      enabled: true
+      servicePort: 80
+      containerPort: 8000
+    tls:
+      enabled: false
+
+  # Реплики и ресурсы
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+# Параметры приложения
+app:
+  replicaCount: 1
+  image: dykastys/test_kuber:1.3.4
+  containerPort: 8090
+  JWT_SECRET: |
+    {{ .Values.kong.jwtPublicKey | indent 6 }}
+  JWT_EXPIRATION: "86400000"
+
+# Параметры сервиса
+service:
+  port: 80
+  targetPort: 8090
+
+# Ingress для приложения
+ingress:
+  enabled: true
+  host: testkuber
+  pathType: ImplementationSpecific
+
+# PostgreSQL
+postgres:
+  enabled: true
+  image: postgres:14
+  port: 5432
+  persistence:
+    enabled: true
+
+  # Настройки StorageClass
+  storageClassCreate: true              # ← создаёт ли чарт StorageClass
+  storageClassDefault: false            # ← сделать ли его default StorageClass
+  storageClassName: postgres-sc         # ← имя создаваемого StorageClass
+  provisioner: k8s.io/minikube-hostpath # ← провайдер для миникуба. На проде или в облаке используем необходимый.
+  volumeBindingMode: Immediate          # ← привязка PV при создании PVC
+  allowVolumeExpansion: true
+
+  # Используем новый StorageClass
+  storageClass: postgres-sc
+  storage: 1Gi
+
+# База данных
+db:
+  name: test_kuber_prod
+
+# Включение мониторинга (Prometheus + Grafana)
+monitoring:
+  enabled: true
+
+# Настройки kube-prometheus-stack
+kubePrometheusStack:
+  enabled: true
+  prometheus:
+    enabled: true
+    prometheusSpec:
+      serviceMonitorSelectorNilUsesHelmValues: false
+      podMonitorSelectorNilUsesHelmValues: false
+      serviceMonitorNamespaceSelector: {}
+      podMonitorNamespaceSelector: {}
+  grafana:
+    enabled: true
+    adminPassword: "prom-operator"
+    service:
+      type: ClusterIP
+      port: 80
+    ingress:
+      enabled: false
+    additionalDataSources:
+      - name: Prometheus
+        type: prometheus
+        url: http://test-kuber-chart-kube-prometheus-prometheus:9090
+        access: proxy
+        isDefault: true
+
+grafana:
+  ingress:
+    enabled: true
+    host: testkuber.grafana
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
